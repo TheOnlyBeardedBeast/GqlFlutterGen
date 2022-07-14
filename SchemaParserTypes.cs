@@ -1,13 +1,16 @@
-public enum WrapperType {
+public enum WrapperType
+{
     NONNULLABLE,
     LIST,
 }
 
-public class Wrapper{
+public class Wrapper
+{
     public WrapperType Type { get; set; }
 }
 
-public class FieldDefinition{
+public class FieldDefinition
+{
     public string Name { get; set; } = default!;
     public bool Nullable { get; set; }
     public string Type { get; set; } = default!;

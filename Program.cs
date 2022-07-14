@@ -11,7 +11,7 @@ DocumentNode gqlDocument = Utf8GraphQLParser.Parse(schema);
 DocumentNode oDocument = Utf8GraphQLParser.Parse(operations);
 
 var walker = new DummySchemaSyntaxWalker();
-walker.Visit(gqlDocument,new TypeDefinitionItem());
+walker.Visit(gqlDocument, new TypeDefinitionItem());
 
 
 var enumTemplate = File.ReadAllText("./templates/enum.Mustache");
@@ -20,10 +20,10 @@ var classField = File.ReadAllText("./templates/classField.Mustache");
 var classFieldType = File.ReadAllText("./templates/classFieldType.Mustache");
 var operationClassTemplate = File.ReadAllText("./templates/operationClass.Mustache");
 
-new SchemaRenderer(walker.VisitedItems,classTemplate,classField,enumTemplate,classFieldType).RenderSchema();
+new SchemaRenderer(walker.VisitedItems, classTemplate, classField, enumTemplate, classFieldType).RenderSchema();
 
 var sresult = JsonSerializer.Serialize(walker.VisitedItems);
-File.WriteAllText("./sresult.json",sresult);
+File.WriteAllText("./sresult.json", sresult);
 
 /// <summary>
 /// lol
@@ -33,10 +33,10 @@ var oWalker = new OperationWalker(walker.VisitedItems);
 oWalker.Visit(oDocument, new GraphqlFlutterGen.QueryType());
 
 
-var orenderer = new OperationRenderer(oWalker.Visited,walker.VisitedItems,operationClassTemplate);
+var orenderer = new OperationRenderer(oWalker.Visited, walker.VisitedItems, operationClassTemplate);
 orenderer.RenderOperations();
 
-new SchemaRenderer(orenderer.operationTypes, classTemplate,classField,enumTemplate,classFieldType).RenderSchema();
+new SchemaRenderer(orenderer.operationTypes, classTemplate, classField, enumTemplate, classFieldType).RenderSchema();
 
 var result = JsonSerializer.Serialize(oWalker.Visited);
-File.WriteAllText("./result.json",result);
+File.WriteAllText("./result.json", result);

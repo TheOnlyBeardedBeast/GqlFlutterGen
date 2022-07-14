@@ -4,7 +4,8 @@ using Stubble.Core.Builders;
 
 namespace GraphqlFlutterGen;
 
-public class SchemaRenderer {
+public class SchemaRenderer
+{
     private readonly List<TypeDefinitionItem> items;
     private readonly string classTemplate;
     private readonly string classFieldTemplate;
@@ -13,7 +14,7 @@ public class SchemaRenderer {
     private readonly StubbleVisitorRenderer stubble;
 
 
-    public SchemaRenderer(List<TypeDefinitionItem> items,string classTemplate, string classFieldTemplate, string enumTemplate, string classFieldTypeTemplate)
+    public SchemaRenderer(List<TypeDefinitionItem> items, string classTemplate, string classFieldTemplate, string enumTemplate, string classFieldTypeTemplate)
     {
         this.items = items;
         this.classTemplate = classTemplate;
@@ -28,16 +29,18 @@ public class SchemaRenderer {
         {
             item.MapFields();
 
-            if(item.Type == TypeDefinitionType.Enum) {
-                    var output = stubble.Render(enumTemplate, item);
+            if (item.Type == TypeDefinitionType.Enum)
+            {
+                var output = stubble.Render(enumTemplate, item);
 
-                    Console.WriteLine(output);
+                Console.WriteLine(output);
             }
 
-            if(item.Type == TypeDefinitionType.Type) {
+            if (item.Type == TypeDefinitionType.Type)
+            {
                 this.RenderClass(item);
             }
-        }       
+        }
     }
 
     protected void RenderClass(TypeDefinitionItem item)
@@ -47,38 +50,40 @@ public class SchemaRenderer {
 
         for (int i = 0; i < item.Fields.Count; i++)
         {
-            if(item.Fields[i] is not null)
+            if (item.Fields[i] is not null)
             {
-                if(i == item.Fields.Count-1){
+                if (i == item.Fields.Count - 1)
+                {
                     sb.Append(RenderField(item.Fields[i]));
-                } else {
+                }
+                else
+                {
                     sb.AppendLine(RenderField(item.Fields[i]));
                 }
             }
         }
 
-        output = output.Replace("##Fields##",sb.ToString());
+        output = output.Replace("##Fields##", sb.ToString());
 
         Console.WriteLine(output);
     }
 
     protected string RenderField(FieldDefinition item)
     {
-        var output = stubble.Render(classFieldTemplate, item).Replace("##Type##",this.RenderFieldType(item));
+        var output = stubble.Render(classFieldTemplate, item).Replace("##Type##", this.RenderFieldType(item));
         return output;
     }
 
     protected string RenderFieldType(FieldDefinition item)
     {
-        var typeNotNullable = item.OriginalType.IndexOf(item.Type+"!") > -1;
-        var result = item.OriginalType.Replace("]!",">").Replace("]",">?").Replace("[","List<").Replace("!","");
-        if(typeNotNullable) {
+        var typeNotNullable = item.OriginalType.IndexOf(item.Type + "!") > -1;
+
+        var result = item.OriginalType.Replace("]!", ">").Replace("]", ">?").Replace("[", "List<").Replace("!", "");
+        if (typeNotNullable)
+        {
             return result;
         }
-
-        return result.Replace(item.Type,item.Type+"?");
-
-
         
+        return result + "?";
     }
 }

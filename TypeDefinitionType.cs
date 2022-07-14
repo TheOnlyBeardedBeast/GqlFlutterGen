@@ -1,9 +1,9 @@
 namespace GraphqlFlutterGen;
 
 public enum TypeDefinitionType
-    {
-        Interface,
-        Type,
-        Enum,
-        Extension
-    }
+{
+    Interface,
+    Type,
+    Enum,
+    Extension
+}

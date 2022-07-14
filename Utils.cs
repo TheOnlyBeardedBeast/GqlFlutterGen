@@ -19,18 +19,21 @@ public static class Utils
             {"UUID","String"}
         };
 
-    public static void MapFields(this TypeDefinitionItem visited){
+    public static void MapFields(this TypeDefinitionItem visited)
+    {
         foreach (var item in visited.Fields)
         {
             item.MapFieldTypes();
         }
     }
 
-    public static void MapFieldTypes(this FieldDefinition field){
+    public static void MapFieldTypes(this FieldDefinition field)
+    {
         string newType = ScalarMap.FirstOrDefault(e => e.Key == field.Type).Value ?? field.Type;
-        if(field.OriginalType is not null){
-            field.OriginalType = field.OriginalType.Replace(field.Type,newType);
+        if (field.OriginalType is not null)
+        {
+            field.OriginalType = field.OriginalType.Replace(field.Type, newType);
         }
-        field.Type = field.Type;
+        field.Type = newType;
     }
 }

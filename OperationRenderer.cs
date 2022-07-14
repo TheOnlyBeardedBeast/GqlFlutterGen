@@ -4,10 +4,11 @@ using Stubble.Core.Builders;
 
 namespace GraphqlFlutterGen;
 
-class OperationResult {
-    public string Name { get; set; }
-    public string RootType { get; set; }
-    public string Type { get; set; }
+class OperationResult
+{
+    public string? Name { get; set; }
+    public string? RootType { get; set; }
+    public string? Type { get; set; }
 }
 
 public class OperationRenderer
@@ -18,7 +19,7 @@ public class OperationRenderer
     private readonly StubbleVisitorRenderer stubble;
 
     public readonly List<TypeDefinitionItem> operationTypes = new List<TypeDefinitionItem>();
-    public Dictionary<OperationType,string> OperationMap = new Dictionary<OperationType,string>
+    public Dictionary<OperationType, string> OperationMap = new Dictionary<OperationType, string>
     {
         { OperationType.Query,"Query"},
         { OperationType.Mutation,"Mutation"},
@@ -32,32 +33,42 @@ public class OperationRenderer
         this.stubble = new StubbleBuilder().Build();
     }
 
-    
+
 
     public void RenderOperations()
     {
         foreach (QueryType item in this.opertions)
         {
-                var operationType = new TypeDefinitionItem();
-                operationType.Name = char.ToUpper(item.Name[0]) + item.Name.Substring(1);
-                operationType.Type = TypeDefinitionType.Type;
+            var operationType = new TypeDefinitionItem();
+            operationType.Name = char.ToUpper(item.Name[0]) + item.Name.Substring(1);
+            operationType.Type = TypeDefinitionType.Type;
 
-                this.operationTypes.Add(operationType);
+            this.operationTypes.Add(operationType);
 
-                this.MapSelections(item.Selection.SubSelection,OperationMap[item.OperationType], item.Name,operationType,null);
+            var variableType = new TypeDefinitionItem();
+            variableType.Name = operationType.Name + "Args";
+            variableType.Type = TypeDefinitionType.Type;
+            this.MapVariableFields(item.Variables,variableType);
+
+            this.operationTypes.Add(variableType);
+
+            this.MapSelections(item.Selection.SubSelection, OperationMap[item.OperationType], item.Name, operationType, null);
+
             
         }
-    } 
+    }
 
-    public void MapSelections(List<Selection> selections,string root, string rootName,TypeDefinitionItem fieldSource, string? name = null )
+    public void MapSelections(List<Selection> selections, string root, string rootName, TypeDefinitionItem fieldSource, string? name = null)
     {
         foreach (Selection selection in selections)
         {
             TypeDefinitionItem selectionRoot = items.First(e => e.Name == root);
             var selectionType = selectionRoot.Fields.First(e => e.Name == selection.Field);
 
-            if(Utils.ScalarMap.Any(e => e.Key == selectionType.Type || e.Value == selectionType.Type)){
-                fieldSource.Fields.Add(new FieldDefinition{
+            if (Utils.ScalarMap.Any(e => e.Key == selectionType.Type || e.Value == selectionType.Type))
+            {
+                fieldSource.Fields.Add(new FieldDefinition
+                {
                     Type = selectionType.Type,
                     OriginalType = selectionType.OriginalType,
                     Name = selection.Alias ?? selection.Field
@@ -74,18 +85,33 @@ public class OperationRenderer
 
             this.operationTypes.Add(operationType);
 
-            
-            fieldSource.Fields.Add(new FieldDefinition{
+
+            fieldSource.Fields.Add(new FieldDefinition
+            {
                 Type = newName,
-                OriginalType = selectionType.OriginalType.Replace(selectionType.Type,newName),
-                Name = selection.Alias ?? selection.Field
+                OriginalType = selectionType.OriginalType.Replace(selectionType.Type, newName),
+                Name = (selection.Alias ?? selection.Field)!
             });
 
 
 
-            if(selection.SubSelection.Count > 0){
-                this.MapSelections(selection.SubSelection,selectionType.Type,rootName ,operationType);
+            if (selection.SubSelection.Count > 0)
+            {
+                this.MapSelections(selection.SubSelection, selectionType.Type, rootName, operationType);
             }
+        }
+    }
+
+    public void MapVariableFields(List<Variable> variables, TypeDefinitionItem item)
+    {
+        foreach (Variable variable in variables)
+        {
+            item.Fields.Add(new FieldDefinition
+            {
+                Name = variable.Name,
+                OriginalType = variable.Type,
+                Type = variable.Type.Replace("[","").Replace("]","").Replace("!",""),
+            });
         }
     }
 

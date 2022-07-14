@@ -176,7 +176,7 @@ public class DummySchemaSyntaxWalker
         TypeDefinitionItem context)
     {
         var item = new TypeDefinitionItem { Name = node.Name.ToString(), Type = TypeDefinitionType.Type };
-        
+
         using (var interfaces = node.Interfaces.GetEnumerator())
         {
             while (interfaces.MoveNext())
@@ -223,7 +223,7 @@ public class DummySchemaSyntaxWalker
         VisitMany(node.Directives, context, VisitDirective);
         VisitMany(node.Interfaces, context, VisitNamedType);
         VisitMany(node.Fields, item, VisitFieldDefinition);
-        
+
         this.VisitedItems.Add(item);
     }
 
@@ -346,31 +346,34 @@ public class DummySchemaSyntaxWalker
     }
 
     protected FieldDefinition TransformTypeField(ITypeNode type, FieldDefinition? context, bool nullable = false)
+    {
+        var ctx = context ?? new FieldDefinition();
+
+        ctx.OriginalType = type.ToString();
+
+    check:
+        if (type.IsListType())
         {
-            var ctx = context ?? new FieldDefinition();
-
-            ctx.OriginalType = type.ToString();
-
-            check:
-            if(type.IsListType())
+            ctx.Wrappers.Add(new Wrapper
             {
-                ctx.Wrappers.Add(new Wrapper{
-                    Type = WrapperType.LIST,
-                });
-                type = type.InnerType();
-                goto check;
-            }
-
-            if(type.IsNonNullType()){
-                ctx.Wrappers.Add(new Wrapper{
-                    Type = WrapperType.NONNULLABLE,
-                });
-                type = type.InnerType();
-                goto check;
-            } 
-
-
-            ctx.Type = type.ToString();
-            return ctx;
+                Type = WrapperType.LIST,
+            });
+            type = type.InnerType();
+            goto check;
         }
+
+        if (type.IsNonNullType())
+        {
+            ctx.Wrappers.Add(new Wrapper
+            {
+                Type = WrapperType.NONNULLABLE,
+            });
+            type = type.InnerType();
+            goto check;
+        }
+
+
+        ctx.Type = type.ToString();
+        return ctx;
+    }
 }

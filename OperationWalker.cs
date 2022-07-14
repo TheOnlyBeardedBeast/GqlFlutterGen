@@ -2,34 +2,38 @@ using HotChocolate.Language;
 
 namespace GraphqlFlutterGen;
 
-public enum OType {
+public enum OType
+{
     OPERATION,
     FRAGMENT
 }
 
-public class Selection {
-    public string Field {get; set;}
-    public string Alias { get; set; }
-    public List<string> Arguments {get; set;} = new List<string>();
-    public List<Selection> SubSelection {get; set;} = new List<Selection>();
+public class Selection
+{
+    public string Field { get; set; }
+    public string? Alias { get; set; }
+    public List<string> Arguments { get; set; } = new List<string>();
+    public List<Selection> SubSelection { get; set; } = new List<Selection>();
 
-    public string Type {get; set;}
+    public string? Type { get; set; }
 }
 
-public class Variable {
-    public string Name { get; set; }
-    public string Type { get; set; }
+public class Variable
+{
+    public string Name { get; set; } = default!;
+    public string Type { get; set; } = default!;
     public object? DefaultValue { get; set; }
 }
 
-public class QueryType{
-    public OType Type {get; set;}
+public class QueryType
+{
+    public OType Type { get; set; }
 
-    public List<Variable> Variables {get; set;} = new List<Variable>();
-    public Selection Selection {get; set;}
-    public string Name {get; set;}
+    public List<Variable> Variables { get; set; } = new List<Variable>();
+    public Selection? Selection { get; set; }
+    public string? Name { get; set; }
 
-    public OperationType OperationType {get; set;}
+    public OperationType OperationType { get; set; }
 };
 
 public class OperationWalker
@@ -94,17 +98,18 @@ public class OperationWalker
             item.Name = node.Name.Value;
 
             using (var variables = node.VariableDefinitions.GetEnumerator())
-        {
-            while (variables.MoveNext())
             {
-                item.Variables.Add(new Variable{
-                    Name = variables.Current.Variable.Name.Value,
-                    Type = variables.Current.Type.ToString(),
-                });
+                while (variables.MoveNext())
+                {
+                    item.Variables.Add(new Variable
+                    {
+                        Name = variables.Current.Variable.Name.Value,
+                        Type = variables.Current.Type.ToString(),
+                    });
+                }
             }
-        }
 
-            
+
 
             // VisitName(node.Name, context);
 
@@ -176,14 +181,14 @@ public class OperationWalker
     {
 
         foreach (var item in node.Selections)
-            {
-                var selection = new Selection();
-                OVisitSelection(item, selection, typeRoot);
-                context.SubSelection.Add(selection);
-            }
+        {
+            var selection = new Selection();
+            OVisitSelection(item, selection, typeRoot);
+            context.SubSelection.Add(selection);
+        }
     }
 
-    protected void OVisitSelection(ISelectionNode node, Selection context,string typeRoot)
+    protected void OVisitSelection(ISelectionNode node, Selection context, string typeRoot)
     {
         switch (node.Kind)
         {
