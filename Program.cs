@@ -19,8 +19,9 @@ var classTemplate = File.ReadAllText("./templates/class.Mustache");
 var classField = File.ReadAllText("./templates/classField.Mustache");
 var classFieldType = File.ReadAllText("./templates/classFieldType.Mustache");
 var operationClassTemplate = File.ReadAllText("./templates/operationClass.Mustache");
+var varibleClassTemplate = File.ReadAllText("./templates/variableClass.Mustache");
 
-new SchemaRenderer(walker.VisitedItems, classTemplate, classField, enumTemplate, classFieldType).RenderSchema();
+new SchemaRenderer(walker.VisitedItems, classTemplate, classField, enumTemplate, classFieldType, varibleClassTemplate).RenderSchema();
 
 var sresult = JsonSerializer.Serialize(walker.VisitedItems);
 File.WriteAllText("./sresult.json", sresult);
@@ -36,7 +37,7 @@ oWalker.Visit(oDocument, new GraphqlFlutterGen.QueryType());
 var orenderer = new OperationRenderer(oWalker.Visited, walker.VisitedItems, operationClassTemplate);
 orenderer.RenderOperations();
 
-new SchemaRenderer(orenderer.operationTypes, classTemplate, classField, enumTemplate, classFieldType).RenderSchema();
+new SchemaRenderer(orenderer.operationTypes, classTemplate, classField, enumTemplate, classFieldType, varibleClassTemplate).RenderSchema();
 
 var result = JsonSerializer.Serialize(oWalker.Visited);
 File.WriteAllText("./result.json", result);

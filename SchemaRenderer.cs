@@ -11,20 +11,25 @@ public class SchemaRenderer
     private readonly string classFieldTemplate;
     private readonly string enumTemplate;
     private readonly string classFieldTypeTemplate;
+    private readonly string variableClassTemplate;
     private readonly StubbleVisitorRenderer stubble;
 
 
-    public SchemaRenderer(List<TypeDefinitionItem> items, string classTemplate, string classFieldTemplate, string enumTemplate, string classFieldTypeTemplate)
+    public SchemaRenderer(List<TypeDefinitionItem> items, string classTemplate, string classFieldTemplate, string enumTemplate, string classFieldTypeTemplate, string variableClassTemplate)
     {
         this.items = items;
         this.classTemplate = classTemplate;
         this.classFieldTemplate = classFieldTemplate;
         this.enumTemplate = enumTemplate;
         this.classFieldTypeTemplate = classFieldTypeTemplate;
+        this.variableClassTemplate = variableClassTemplate;
         this.stubble = new StubbleBuilder().Build();
     }
     public void RenderSchema()
     {
+
+        Console.WriteLine("import 'package:simple_json_mapper/simple_json_mapper.dart';");
+
         foreach (var item in items)
         {
             item.MapFields();
@@ -40,12 +45,17 @@ public class SchemaRenderer
             {
                 this.RenderClass(item);
             }
+
+            if (item.Type == TypeDefinitionType.VariableType)
+            {
+                this.RenderClass(item, variableClassTemplate);
+            }
         }
     }
 
-    protected void RenderClass(TypeDefinitionItem item)
+    protected void RenderClass(TypeDefinitionItem item, string? template = null)
     {
-        var output = stubble.Render(classTemplate, item);
+        var output = stubble.Render(template ?? classTemplate, item);
         var sb = new StringBuilder();
 
         for (int i = 0; i < item.Fields.Count; i++)

@@ -5,5 +5,6 @@ public enum TypeDefinitionType
     Interface,
     Type,
     Enum,
-    Extension
+    Extension,
+    VariableType
 }

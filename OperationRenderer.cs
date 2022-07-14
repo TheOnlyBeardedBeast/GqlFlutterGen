@@ -45,12 +45,15 @@ public class OperationRenderer
 
             this.operationTypes.Add(operationType);
 
-            var variableType = new TypeDefinitionItem();
-            variableType.Name = operationType.Name + "Args";
-            variableType.Type = TypeDefinitionType.Type;
-            this.MapVariableFields(item.Variables,variableType);
+            if(item.Variables.Count > 0){
+                var variableType = new TypeDefinitionItem();
+                variableType.Name = operationType.Name + "Args";
+                variableType.Type = TypeDefinitionType.VariableType;
+                this.MapVariableFields(item.Variables,variableType);
+                this.operationTypes.Add(variableType);
+            }
 
-            this.operationTypes.Add(variableType);
+            
 
             this.MapSelections(item.Selection.SubSelection, OperationMap[item.OperationType], item.Name, operationType, null);
 
