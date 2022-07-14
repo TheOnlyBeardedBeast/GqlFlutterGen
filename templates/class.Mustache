@@ -2,6 +2,8 @@
 class {{Name}} {
 ##Fields##
 
+    const {{Name}}({ {{#Fields}}required this.{{Name}},{{/Fields}} });
+
     @JProp(ignore: true)
     final String __typename = "{{Name}}";
 }

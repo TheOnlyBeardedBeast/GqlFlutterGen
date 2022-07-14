@@ -5,152 +5,187 @@ Currently supports
 - enums
 - Operation types
 - Selection Types
-- Operation Vraible types
-
-TODO: 
-- Add constructors
 
 example result:
 
+tested type maps within a real application in flutter
+
 ```dart
 import 'package:simple_json_mapper/simple_json_mapper.dart';
-
 @JsonObject()
 class Query {
-  late List<Document> documents;
-  late List<Marker> markers;
-  late List<Notification> notifications;
-  late List<Photo> photos;
+    final List<Document> documents;
+    final List<Marker> markers;
+    final List<Notification> notifications;
+    final List<Photo> photos;
 
-  @JProp(ignore: true)
-  final String __typename = "Query";
+    const Query({ required this.documents,required this.markers,required this.notifications,required this.photos, });
+
+    @JProp(ignore: true)
+    final String __typename = "Query";
 }
+
 
 @JsonObject()
 class Mutation {
-  late int? seed;
+    final int? seed;
 
-  @JProp(ignore: true)
-  final String __typename = "Mutation";
+    const Mutation({ required this.seed, });
+
+    @JProp(ignore: true)
+    final String __typename = "Mutation";
 }
+
 
 @JsonObject()
 class Photo {
-  late String? caption;
-  late String folder;
-  late String path;
-  late String id;
-  late DateTime created;
+    final String? caption;
+    final String folder;
+    final String path;
+    final String id;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "Photo";
+    const Photo({ required this.caption,required this.folder,required this.path,required this.id,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "Photo";
 }
+
 
 @JsonObject()
 class Notification {
-  late String title;
-  late String content;
-  late String id;
-  late DateTime created;
+    final String title;
+    final String content;
+    final String id;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "Notification";
+    const Notification({ required this.title,required this.content,required this.id,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "Notification";
 }
+
 
 @JsonObject()
 class Marker {
-  late String? name;
-  late int? number;
-  late MarkerType type;
-  late String id;
-  late DateTime created;
+    final String? name;
+    final int? number;
+    final MarkerType type;
+    final String id;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "Marker";
+    const Marker({ required this.name,required this.number,required this.type,required this.id,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "Marker";
 }
+
 
 @JsonObject()
 class Document {
-  late String title;
-  late String id;
-  late DateTime created;
+    final String title;
+    final String id;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "Document";
+    const Document({ required this.title,required this.id,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "Document";
 }
 
+
 enum MarkerType {
-  @EnumValue(value: "WATCHTOWER")
-  // ignore: constant_identifier_names
-  WATCHTOWER,
-  @EnumValue(value: "SALTBASE")
-  // ignore: constant_identifier_names
-  SALTBASE,
-  @EnumValue(value: "FEEDER")
-  // ignore: constant_identifier_names
-  FEEDER,
+    @EnumValue(value: "WATCHTOWER")
+    // ignore: constant_identifier_names
+    WATCHTOWER,
+    @EnumValue(value: "SALTBASE")
+    // ignore: constant_identifier_names
+    SALTBASE,
+    @EnumValue(value: "FEEDER")
+    // ignore: constant_identifier_names
+    FEEDER,
 }
 
 @JsonObject()
 class DocumentsQuery {
-  List<DocumentsQueryDocument>? documents;
+    final List<DocumentsQueryDocument> documents;
 
-  @JProp(ignore: true)
-  final String __typename = "DocumentsQuery";
+    const DocumentsQuery({ required this.documents, });
+
+    @JProp(ignore: true)
+    final String __typename = "DocumentsQuery";
 }
+
 
 @JsonObject()
 class DocumentsQueryDocument {
-  late String id;
-  late String title;
-  late DateTime created;
+    final String id;
+    final String title;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "DocumentsQueryDocument";
+    const DocumentsQueryDocument({ required this.id,required this.title,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "DocumentsQueryDocument";
 }
+
 
 @JsonObject()
 class NotificationsQuery {
-  late List<NotificationsQueryNotification> notifications;
+    final List<NotificationsQueryNotification> notifications;
 
-  @JProp(ignore: true)
-  final String __typename = "NotificationsQuery";
+    const NotificationsQuery({ required this.notifications, });
+
+    @JProp(ignore: true)
+    final String __typename = "NotificationsQuery";
 }
+
 
 @JsonObject()
 class NotificationsQueryNotification {
-  late String id;
-  late String title;
-  late DateTime created;
-  late String content;
+    final String id;
+    final String title;
+    final DateTime created;
+    final String content;
 
-  @JProp(ignore: true)
-  final String __typename = "NotificationsQueryNotification";
+    const NotificationsQueryNotification({ required this.id,required this.title,required this.created,required this.content, });
+
+    @JProp(ignore: true)
+    final String __typename = "NotificationsQueryNotification";
 }
+
 
 @JsonObject()
 class MarkersQuery {
-  late List<MarkersQueryMarker> markers;
+    final List<MarkersQueryMarker> markers;
 
-  @JProp(ignore: true)
-  final String __typename = "MarkersQuery";
+    const MarkersQuery({ required this.markers, });
+
+    @JProp(ignore: true)
+    final String __typename = "MarkersQuery";
 }
+
 
 @JsonObject()
 class MarkersQueryMarker {
-  late String id;
-  late MarkerType type;
-  late DateTime created;
+    final String id;
+    final MarkerType type;
+    final DateTime created;
 
-  @JProp(ignore: true)
-  final String __typename = "MarkersQueryMarker";
+    const MarkersQueryMarker({ required this.id,required this.type,required this.created, });
+
+    @JProp(ignore: true)
+    final String __typename = "MarkersQueryMarker";
 }
+
 
 @JsonObject()
 class SeedMutation {
-  late int? seed;
+    final int? seed;
 
-  @JProp(ignore: true)
-  final String __typename = "SeedMutation";
+    const SeedMutation({ required this.seed, });
+
+    @JProp(ignore: true)
+    final String __typename = "SeedMutation";
 }
 ```
