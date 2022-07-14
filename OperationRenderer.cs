@@ -1,6 +1,7 @@
 using HotChocolate.Language;
 using Stubble.Core;
 using Stubble.Core.Builders;
+using System.Text.Json;
 
 namespace GraphqlFlutterGen;
 
@@ -68,7 +69,13 @@ public class OperationRenderer
             TypeDefinitionItem selectionRoot = items.First(e => e.Name == root);
             var selectionType = selectionRoot.Fields.First(e => e.Name == selection.Field);
 
-            if (Utils.ScalarMap.Any(e => e.Key == selectionType.Type || e.Value == selectionType.Type))
+
+            
+            bool isNativeType = Utils.ScalarMap.Any(e => e.Key == selectionType.Type || e.Value == selectionType.Type);
+            var anEnum = items.FirstOrDefault(e => e.Name == selectionType.Type);
+            // Console.WriteLine($"{selection.Type},{selectionType.Type},{isEnum?.Name}");
+            // Console.WriteLine(JsonSerializer.Serialize(anEnum));
+            if (isNativeType || anEnum?.Type == TypeDefinitionType.Enum)
             {
                 fieldSource.Fields.Add(new FieldDefinition
                 {
@@ -76,32 +83,39 @@ public class OperationRenderer
                     OriginalType = selectionType.OriginalType,
                     Name = selection.Alias ?? selection.Field
                 });
-                return;
-            }
+            } else {
 
-            var newName = rootName + selectionType.Type;
-            newName = char.ToUpper(newName[0]) + newName.Substring(1);
-
-            var operationType = new TypeDefinitionItem();
-            operationType.Name = newName;
-            operationType.Type = TypeDefinitionType.Type;
-
-            this.operationTypes.Add(operationType);
-
-
-            fieldSource.Fields.Add(new FieldDefinition
-            {
-                Type = newName,
-                OriginalType = selectionType.OriginalType.Replace(selectionType.Type, newName),
-                Name = (selection.Alias ?? selection.Field)!
-            });
+                
 
 
 
-            if (selection.SubSelection.Count > 0)
-            {
-                this.MapSelections(selection.SubSelection, selectionType.Type, rootName, operationType);
-            }
+                var newName = selectionType.Type;
+                
+                
+                    // Console.WriteLine(selectionType.Type+","+rootName+","+isNativeType);
+                    newName = rootName + selectionType.Type;
+                    newName = char.ToUpper(newName[0]) + newName.Substring(1);
+                
+
+                var operationType = new TypeDefinitionItem();
+                operationType.Name = newName;
+                operationType.Type = TypeDefinitionType.Type;
+
+                this.operationTypes.Add(operationType);
+
+                fieldSource.Fields.Add(new FieldDefinition
+                {
+                    Type = newName,
+                    OriginalType = selectionType.OriginalType.Replace(selectionType.Type, newName),
+                    Name = (selection.Alias ?? selection.Field)!
+                });
+
+                if (selection.SubSelection.Count > 0 && !isNativeType)
+                {
+                    this.MapSelections(selection.SubSelection, selectionType.Type, rootName, operationType);
+                }
+                }
+            
         }
     }
 

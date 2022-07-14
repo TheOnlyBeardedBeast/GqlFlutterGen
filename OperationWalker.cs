@@ -15,7 +15,7 @@ public class Selection
     public List<string> Arguments { get; set; } = new List<string>();
     public List<Selection> SubSelection { get; set; } = new List<Selection>();
 
-    public string? Type { get; set; }
+    public string Type { get; set; }
 }
 
 public class Variable
