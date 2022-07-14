@@ -34,27 +34,7 @@ directive @stream(
 ) on FIELD
 
 type Query {
-  documents(
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-  ): DocumentsConnection
+  documents: [Document!]!
   markers: [Marker!]!
   notifications: [Notification!]!
   photos: [Photo!]!
@@ -68,74 +48,6 @@ type Mutation {
 The `Upload` scalar type represents a file upload.
 """
 scalar Upload
-
-"""
-A connection to a list of items.
-"""
-type DocumentsConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [DocumentsEdge!]
-
-  """
-  A flattened list of the nodes.
-  """
-  nodes: [Document!]
-}
-
-"""
-Information about pagination in a connection.
-"""
-type PageInfo {
-  """
-  Indicates whether more edges exist following the set defined by the clients arguments.
-  """
-  hasNextPage: Boolean!
-
-  """
-  Indicates whether more edges exist prior the set defined by the clients arguments.
-  """
-  hasPreviousPage: Boolean!
-
-  """
-  When paginating backwards, the cursor to continue.
-  """
-  startCursor: String
-
-  """
-  When paginating forwards, the cursor to continue.
-  """
-  endCursor: String
-}
-
-type Document {
-  title: String!
-  id: UUID!
-  created: DateTime!
-}
-
-"""
-An edge in a connection.
-"""
-type DocumentsEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: Document!
-}
-
-scalar UUID
 
 type Photo {
   caption: String
@@ -160,18 +72,26 @@ type Marker {
   created: DateTime!
 }
 
+type Document {
+  title: String!
+  id: UUID!
+  created: DateTime!
+}
+
 """
 The `Byte` scalar type represents non-fractional whole numeric values. Byte can represent values between 0 and 255.
 """
 scalar Byte
-
-"""
-The `DateTime` scalar represents an ISO-8601 compliant date time type.
-"""
-scalar DateTime
 
 enum MarkerType {
   WATCHTOWER
   SALTBASE
   FEEDER
 }
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime
+
+scalar UUID
