@@ -37,7 +37,29 @@ type Query {
   documents: [Document!]!
   markers: [Marker!]!
   notifications: [Notification!]!
-  photos: [Photo!]!
+  photoFolders: [String!]!
+  photos(
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    where: PhotoFilterInput
+  ): PhotosConnection
 }
 
 type Mutation {
@@ -49,6 +71,106 @@ The `Upload` scalar type represents a file upload.
 """
 scalar Upload
 
+input PhotoFilterInput {
+  and: [PhotoFilterInput!]
+  or: [PhotoFilterInput!]
+  caption: StringOperationFilterInput
+  folder: StringOperationFilterInput
+  path: StringOperationFilterInput
+  id: ComparableGuidOperationFilterInput
+  created: ComparableDateTimeOperationFilterInput
+}
+
+"""
+A connection to a list of items.
+"""
+type PhotosConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PhotosEdge!]
+
+  """
+  A flattened list of the nodes.
+  """
+  nodes: [Photo!]
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ComparableGuidOperationFilterInput {
+  eq: UUID
+  neq: UUID
+  in: [UUID!]
+  nin: [UUID!]
+  gt: UUID
+  ngt: UUID
+  gte: UUID
+  ngte: UUID
+  lt: UUID
+  nlt: UUID
+  lte: UUID
+  nlte: UUID
+}
+
+input ComparableDateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime!]
+  nin: [DateTime!]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  Indicates whether more edges exist following the set defined by the clients arguments.
+  """
+  hasNextPage: Boolean!
+
+  """
+  Indicates whether more edges exist prior the set defined by the clients arguments.
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
 type Photo {
   caption: String
   folder: String!
@@ -56,6 +178,28 @@ type Photo {
   id: UUID!
   created: DateTime!
 }
+
+"""
+An edge in a connection.
+"""
+type PhotosEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Photo!
+}
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime
+
+scalar UUID
 
 type Notification {
   title: String!
@@ -88,10 +232,3 @@ enum MarkerType {
   SALTBASE
   FEEDER
 }
-
-"""
-The `DateTime` scalar represents an ISO-8601 compliant date time type.
-"""
-scalar DateTime
-
-scalar UUID

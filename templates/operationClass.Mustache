@@ -1,4 +1,7 @@
+@JsonObject()
 class {{OperationType}}{{Name}}Response {
 ##Fields##
+
+    const {{Name}}({ {{#Fields}}required this.{{Name}},{{/Fields}} });
 }
 

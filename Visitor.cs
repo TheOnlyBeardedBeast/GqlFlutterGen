@@ -242,14 +242,31 @@ public class DummySchemaSyntaxWalker
         VisitMany(node.Directives, context, VisitDirective);
     }
 
+    protected void VisitInputFieldDefinition(
+        InputValueDefinitionNode node,
+        TypeDefinitionItem context)
+    {
+        var field = this.TransformTypeField(node.Type, null);
+        field.Name = node.Name.ToString();
+
+        context.Fields.Add(field);
+        VisitName(node.Name, context);
+        VisitIfNotNull(node.Description, context, VisitStringValue);
+        // VisitMany(node.Arguments, context, VisitInputValueDefinition);
+        VisitType(node.Type, context);
+        VisitMany(node.Directives, context, VisitDirective);
+    }
+
     protected override void VisitInputObjectTypeDefinition(
         InputObjectTypeDefinitionNode node,
         TypeDefinitionItem context)
     {
-        VisitName(node.Name, context);
-        VisitIfNotNull(node.Description, context, VisitStringValue);
-        VisitMany(node.Directives, context, VisitDirective);
-        VisitMany(node.Fields, context, VisitInputValueDefinition);
+        var item = new TypeDefinitionItem { Name = node.Name.ToString(), Type = TypeDefinitionType.Type };
+        VisitName(node.Name, item);
+        VisitIfNotNull(node.Description, item, VisitStringValue);
+        VisitMany(node.Directives, item, VisitDirective);
+        VisitMany(node.Fields, item, VisitInputFieldDefinition);
+        this.VisitedItems.Add(item);
     }
 
     protected override void VisitInputObjectTypeExtension(
